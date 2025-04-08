@@ -83,54 +83,64 @@ public class TestExample {
 
     @Test
     public void testAddTransaction_New() {
-        // Setup
+        // Pre-condition: List of transactions is empty
         assertEquals(0, model.getTransactions().size());
-
-        // Execution
-        boolean result = controller.addTransaction(50.0, "food");
-        assertTrue("Transaction should be added successfully", result);
-
-        // Validation
-        assertEquals("Transaction is added to the table", 1, model.getTransactions().size());
-        assertEquals("Total Cost is updated to 50.0", 50.0, getTotalCost(), 0.01);
+    
+        // Perform the action: Add a transaction
+        assertTrue(controller.addTransaction(34.21, "food"));
+    
+        // Post-condition: List of transactions contains one transaction
+        assertEquals(1, model.getTransactions().size());
+    
+        // Check the contents of the list
+        assertEquals(34.21, getTotalCost(), 0.01);
     }
 
 
     @Test
     public void testInvalidInputHandling() {
-        // Setup
+        // Pre-condition: List of transactions is empty and total cost is 0
         assertEquals(0, model.getTransactions().size());
         double startingTotal = getTotalCost();
 
-        // Execution
+        // Perform the action: Try to add invalid transactions such as negative amount
         boolean negativeAmount = controller.addTransaction(-5.0, "food");
-        assertFalse("Should display error when adding a negative amount", negativeAmount);
 
+        // Post-condition: Should return false, show error message to user, and not add the transaction
+        assertFalse(negativeAmount);
+
+        // Perform the action: Try to add invalid transactions such as invalid category
         boolean invalidCategoryResult = controller.addTransaction(20, "sports");
-        assertFalse("Should display error when adding an invalid category", invalidCategoryResult);
+        
+        // Post-condition: Should return false, show error message to user, and not add the transaction
+        assertFalse(invalidCategoryResult);
 
-        // Validation
-        assertEquals("No transactions added to table", 0, model.getTransactions().size());
-        assertEquals("Total cost remains unchanged", startingTotal, getTotalCost(), 0.01);
+        // Validation: no transactions should have been added and total cost should remain unchanged
+        assertEquals(0, model.getTransactions().size());
+        assertEquals(startingTotal, getTotalCost(), 0.01);
     }
 
 
     @Test
     public void testFilterByAmount() {
-        // Setup
+        // Pre-condition: List of transactions is empty
+        assertEquals(0, model.getTransactions().size());
+        
+        // Setup: Add multiple transactions with different amounts and categories
         controller.addTransaction(15.00, "bills");     
         controller.addTransaction(45.07, "travel");  
         controller.addTransaction(15.00, "food"); 
         controller.addTransaction(15.32, "travel"); 
         controller.addTransaction(15, "other"); 
 
-        // Execution
+        // Perform the action: Filter the transactions by amount
         AmountFilter amountFilter = new AmountFilter(15.00);
         List<Transaction> filteredList = amountFilter.filter(model.getTransactions());
 
-        // Validation
-        assertEquals("Should find 3 transactions with amount=15.00", 3, filteredList.size());
+        // Post-condition: Should find 3 transactions with amount=15.00
+        assertEquals(3, filteredList.size());
 
+        // Validation: Check the amount of each filtered transaction
         for (Transaction t : filteredList) {
             assertEquals("Amount should be 15.00", 15.00, t.getAmount(), 0.01);
         }
@@ -139,22 +149,26 @@ public class TestExample {
 
     @Test
     public void testFilterByCategory() {
-        // Setup
+        // Pre-condition: List of transactions is empty
+        assertEquals(0, model.getTransactions().size());
+
+        // Setup: Add multiple transactions with different amounts and categories
         controller.addTransaction(15.00, "bills");     
         controller.addTransaction(45.07, "travel");  
         controller.addTransaction(15.00, "food"); 
         controller.addTransaction(15.32, "travel"); 
         controller.addTransaction(15, "other"); 
 
-        // Execution
+        // Perform the action: Filter the transactions by category
         CategoryFilter categoryFilter = new CategoryFilter("travel");
         List<Transaction> filteredList = categoryFilter.filter(model.getTransactions());
 
-        // Validation
-        assertEquals("Should find 2 transactions with category=travel", 2, filteredList.size());
+        // Post-condition: Should find 2 transactions with category=travel
+        assertEquals(2, filteredList.size());
 
+        // Validation: Check the category of each filtered transaction
         for (Transaction t : filteredList) {
-            assertEquals("Category should be 'travel'", "travel", t.getCategory());
+            assertEquals("travel", t.getCategory());
         }
     }
 
