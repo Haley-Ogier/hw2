@@ -20,6 +20,9 @@ public class ExpenseTrackerView extends JFrame {
   private JTextField categoryField;
   private DefaultTableModel model;
   
+  private JComboBox<String> filterTypeCombo;
+  private JTextField filterValueField;
+  private JButton applyFilterBtn;
 
   public ExpenseTrackerView() {
     setTitle("Expense Tracker"); // Set title
@@ -52,14 +55,29 @@ public class ExpenseTrackerView extends JFrame {
     inputPanel.add(categoryField);
     inputPanel.add(addTransactionBtn);
   
-    JPanel buttonPanel = new JPanel();
-    buttonPanel.add(addTransactionBtn);
+    filterTypeCombo = new JComboBox<>(new String[]{"Category", "Amount"});
+    filterValueField = new JTextField(10);
+    applyFilterBtn = new JButton("Apply Filter");
+
+
+    JPanel filterPanel = new JPanel();
+    filterPanel.add(new JLabel("Filter by:"));
+    filterPanel.add(filterTypeCombo);
+    filterPanel.add(filterValueField);
+    filterPanel.add(applyFilterBtn);
+
+    JPanel bottomPanel = new JPanel(new GridLayout(2,1));
+    bottomPanel.add(filterPanel);
+    
+
+    //JPanel buttonPanel = new JPanel();
+    bottomPanel.add(addTransactionBtn);
   
     // Add panels to frame
     add(inputPanel, BorderLayout.NORTH);
     add(new JScrollPane(transactionsTable), BorderLayout.CENTER); 
-    add(buttonPanel, BorderLayout.SOUTH);
-  
+    add(bottomPanel, BorderLayout.SOUTH);
+
     // Set frame properties
     setSize(400, 300);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -124,5 +142,17 @@ public class ExpenseTrackerView extends JFrame {
 
   public void setCategoryField(JTextField categoryField) {
     this.categoryField = categoryField;
+  }
+
+  public String getFilterType() {
+    return (String) filterTypeCombo.getSelectedItem();
+  }
+
+  public String getFilterValue() {
+    return filterValueField.getText();
+  }
+
+  public JButton getApplyFilterBtn() {
+    return applyFilterBtn;
   }
 }
